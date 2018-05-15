@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="775.0" prefWidth="950.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.company.controllers.MenuController">
+    <children>
+        <MenuBar AnchorPane.bottomAnchor="750.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <menus>
+                <Menu mnemonicParsing="false">
+                    <graphic>
+                        <Label onMouseClicked="#aboutAuthorOnMouseClicked" text="O autorze" textFill="#370ec9" />
+                    </graphic>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <AnchorPane prefHeight="750.0" prefWidth="201.0" style="-fx-border-width: 1 1 0 0; -fx-border-color: black;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="750.0" AnchorPane.topAnchor="25.0">
+            <children>
+                <VBox alignment="TOP_CENTER" prefWidth="200.0" style="-fx-padding: 5; -fx-spacing: 5;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <Label text="Sąsiedztwo" />
+                        <ChoiceBox fx:id="neighborhoodTypeChoiceBox" nodeOrientation="LEFT_TO_RIGHT" prefHeight="25.0" prefWidth="200.0" />
+                        <Separator prefWidth="200.0" />
+                        <Label text="Wymiar X" />
+                        <TextField fx:id="dimensionXTextField" alignment="CENTER" promptText="Wprowadź wymiar X" />
+                        <Label text="Wymiar Y" />
+                        <TextField fx:id="dimensionYTextField" alignment="CENTER" promptText="Wprowadź wymiar Y" />
+                        <Separator prefWidth="200.0" />
+                        <Label text="Liczba zarodków" />
+                        <TextField fx:id="nucleonsTextField" alignment="CENTER" promptText="Ile zarodków?" />
+                        <Accordion />
+                        <Separator prefWidth="200.0" />
+                        <Label text="Warunki brzegowe" />
+                        <CheckBox fx:id="pbcCheckBox" disable="true" mnemonicParsing="false" text="Periodyczne" />
+                        <Separator prefWidth="200.0" />
+                        <Label text="Rozmieszczenie zarodków" />
+                        <ChoiceBox fx:id="nucleonsArrangementTypeChoiceBox" disable="true" prefHeight="25.0" prefWidth="200.0" />
+                        <Label text="Opcja okręgu" />
+                        <TextField fx:id="radiusTextField" alignment="CENTER" disable="true" promptText="Wprowadź promień" />
+                        <Separator prefWidth="200.0" />
+                        <Button fx:id="createSpaceButton" mnemonicParsing="false" onAction="#createSpaceButtonOnAction" text="Stwórz przestrzeń" />
+                        <Separator prefWidth="200.0" />
+                        <Button fx:id="startStopButton" disable="true" mnemonicParsing="false" onAction="#startStopButtonOnAction" text="STOP" />
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
+        <Canvas fx:id="canvas" height="600.0" layoutX="200.0" layoutY="25.0" onMouseClicked="#canvasOnMouseClicked" width="600.0" AnchorPane.bottomAnchor="150.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="150.0" AnchorPane.topAnchor="25.0" />
+    </children>
+</AnchorPane>
