@@ -85,7 +85,7 @@ public class MenuController implements Initializable {
                 sizeYOfOneCell = canvas.getHeight() / dimensionYFromUser;
 
                 Grain.setCounter(0);
-                generation = new Generation(new Grain[dimensionYFromUser][dimensionXFromUser]);
+                generation = new Generation(new Grain[dimensionXFromUser][dimensionYFromUser]);
 
                 neighborhoodType = neighborhoodTypeChoiceBox.getValue();
 
