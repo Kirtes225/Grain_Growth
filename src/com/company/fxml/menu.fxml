@@ -41,7 +41,7 @@
                         <Accordion />
                         <Separator prefWidth="200.0" />
                         <Label text="Warunki brzegowe" />
-                        <CheckBox fx:id="pbcCheckBox" disable="true" mnemonicParsing="false" text="Periodyczne" />
+                        <CheckBox fx:id="pbcCheckBox" mnemonicParsing="false" text="Periodyczne" />
                         <Separator prefWidth="200.0" />
                         <Label text="Rozmieszczenie zarodków" />
                         <ChoiceBox fx:id="nucleonsArrangementTypeChoiceBox" disable="true" prefHeight="25.0" prefWidth="200.0" />

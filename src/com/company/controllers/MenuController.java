@@ -3,11 +3,14 @@ package com.company.controllers;
 import com.company.Engine;
 import com.company.Generation;
 import com.company.Grain;
-import com.company.enums.NeighborhoodType;
+import com.company.enums.ModelsType;
 import com.company.enums.NucleonsArrangementType;
+import com.company.interfaces.Arrangement;
 import com.company.interfaces.Rule;
-import com.company.models.Moore;
-import com.company.models.VonNeumann;
+import com.company.models.arrangements.Evenly;
+import com.company.models.arrangements.RandomWithRadius;
+import com.company.models.rules.Moore;
+import com.company.models.rules.VonNeumann;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,7 +20,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import org.jetbrains.annotations.Contract;
 
 import java.net.URL;
@@ -26,7 +28,7 @@ import java.util.ResourceBundle;
 
 public class MenuController implements Initializable {
     @FXML
-    public ChoiceBox<NeighborhoodType> neighborhoodTypeChoiceBox;
+    public ChoiceBox<ModelsType> neighborhoodTypeChoiceBox;
     @FXML
     public ChoiceBox<NucleonsArrangementType> nucleonsArrangementTypeChoiceBox;
     @FXML
@@ -39,6 +41,10 @@ public class MenuController implements Initializable {
     public TextField dimensionXTextField;
     @FXML
     public TextField dimensionYTextField;
+    @FXML
+    public CheckBox pbcCheckBox;
+    @FXML
+    public TextField radiusTextField;
 
     private int dimensionXFromUser, dimensionYFromUser, grainsNumberFromUser;
     private double sizeXOfOneCell = 0, sizeYOfOneCell = 0;
@@ -49,11 +55,14 @@ public class MenuController implements Initializable {
     private Engine engine;
     private Generation generation;
     private Rule rule;
-    private NeighborhoodType neighborhoodType;
+    private ModelsType neighborhoodType;
+    private boolean periodic;
+    private NucleonsArrangementType nucleonsArrangementType;
+    private Arrangement arrangement;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        neighborhoodTypeChoiceBox.getItems().addAll(NeighborhoodType.values());
+        neighborhoodTypeChoiceBox.getItems().addAll(ModelsType.values());
         neighborhoodTypeChoiceBox.getSelectionModel().selectFirst();
 
         nucleonsArrangementTypeChoiceBox.getItems().addAll(NucleonsArrangementType.values());
@@ -98,16 +107,33 @@ public class MenuController implements Initializable {
                         break;
                 }
 
-                engine = new Engine(rule, generation);
+                nucleonsArrangementType = nucleonsArrangementTypeChoiceBox.getValue();
 
-                generateRandomGrains();
-
-                for (int i = 0; i < dimensionXFromUser; i++) {
-                    for (int j = 0; j < dimensionYFromUser; j++) {
-                        System.out.print("GRAIN: " + engine.getGeneration().getSingleGrain(i, j) + " ");
-                    }
-                    System.out.println();
+                switch (nucleonsArrangementType){
+                    case LOSOWE:
+                        arrangement = new com.company.models.arrangements.Random();
+                        break;
+                    case ROWNOMIERNE:
+                        arrangement = new Evenly();
+                        break;
+                    case LOSOWE_Z_PROMIENIEM_R:
+                        arrangement = new RandomWithRadius(-1);
                 }
+
+                periodic = pbcCheckBox.isSelected();
+
+                engine = new Engine(rule, generation, periodic, arrangement, grainsNumberFromUser);
+
+                engine.arrangementOfGeneration();
+
+                //generateRandomGrains();
+
+//                for (int i = 0; i < dimensionXFromUser; i++) {
+//                    for (int j = 0; j < dimensionYFromUser; j++) {
+//                        System.out.print("GRAIN: " + engine.getGeneration().getSingleGrain(i, j) + " ");
+//                    }
+//                    System.out.println();
+//                }
 
                 new Thread(() -> {
                     for (; ; ) {
@@ -200,21 +226,43 @@ public class MenuController implements Initializable {
         int xx = (int) (x / sizeXOfOneCell);
         int yy = (int) (y / sizeYOfOneCell);
 
-        Grain tmp = engine.getGeneration().getSingleGrain(yy, xx);
-        System.out.println(tmp);
+        if (engine != null) {
+            Grain tmp = engine.getGeneration().getSingleGrain(yy, xx);
+            //System.out.println(tmp);
 
-        if (isRunning && tmp == null) {
-            engine.getGeneration().setSingleGrain(yy, xx);
-            graphicsContext.setFill(engine.getGeneration().getSingleGrain(yy, xx).getColor());
-            graphicsContext.fillRect(xx * sizeXOfOneCell, yy * sizeYOfOneCell, sizeXOfOneCell, sizeYOfOneCell);
+            if (isRunning) {
+                if (tmp == null) {
+                    engine.getGeneration().setSingleGrain(yy, xx);
+                    graphicsContext.setFill(engine.getGeneration().getSingleGrain(yy, xx).getColor());
+                    graphicsContext.fillRect(xx * sizeXOfOneCell, yy * sizeYOfOneCell, sizeXOfOneCell, sizeYOfOneCell);
 
-            System.out.println("X: " + x + " Y: " + y + "[xx: " + xx + ", yy: " + yy + "] GRAIN: " + engine.getGeneration().getSingleGrain(yy, xx));
+                    System.out.println("Added: X: " + x + " Y: " + y + "[xx: " + xx + ", yy: " + yy + "] GRAIN: " + engine.getGeneration().getSingleGrain(yy, xx));
+                } else {
+                    System.out.println("THIS IS: " + tmp +" at: (" + xx + ", " + yy + ")");
+//                    int ID = tmp.getID();
+//                    engine.getGeneration().setSingleGrain(yy, xx, null);
+//                    for (int i = 0; i < engine.getGeneration().getSizeX(); i++) {
+//                        for (int j = 0; j < engine.getGeneration().getSizeY(); j++) {
+//                            Grain grainToCheck = engine.getGeneration().getSingleGrain(i, j);
+//                            if (grainToCheck != null) {
+//                                if (grainToCheck.getID() == ID) {
+//                                    engine.getGeneration().setSingleGrain(j, i, null);
+//                                    System.out.println("X " + j + " Y " + i);
+//                                    graphicsContext.setFill(Color.GOLDENROD);
+//                                    graphicsContext.fillRect(j * sizeXOfOneCell, i * sizeYOfOneCell, sizeXOfOneCell, sizeYOfOneCell);
+//                                }
+//                            }
+//                        }
+//                    }
+//                    System.out.println("Removed: X: " + x + " Y: " + y + "[xx: " + xx + ", yy: " + yy + "]");
+                }
+            }
         }
     }
 
     public void aboutAuthorOnMouseClicked(MouseEvent mouseEvent) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, "Made by WIMiIPek (Tomasz Białek)", ButtonType.OK);
-        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        //Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         //stage.getIcons().add(new Image(getClass().getResourceAsStream("../assets/Hedgehog.jpg")));
         alert.setTitle("Tuptający jeż");
         alert.setHeaderText("Tup, tup, tup");

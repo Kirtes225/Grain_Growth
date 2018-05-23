@@ -17,6 +17,10 @@ public class Grain {
         this.color = color;
     }
 
+    public int getID() {
+        return ID;
+    }
+
     public static void setCounter(int counter) {
         Grain.counter = counter;
     }
@@ -31,6 +35,24 @@ public class Grain {
                 "color=" + color +
                 ", ID=" + ID +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Grain grain = (Grain) o;
+
+        if (ID != grain.ID) return false;
+        return color.equals(grain.color);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = color.hashCode();
+        result = 31 * result + ID;
+        return result;
     }
 
     //    public boolean[][] getSpace() {
