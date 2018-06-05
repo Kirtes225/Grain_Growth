@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -13,6 +12,10 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
+    //https://stackoverflow.com/questions/13209538/looking-for-good-algorithm-for-equal-distribution
+    //quasi random sequence -> matlab library for java
+    //Dla rozmieszczenia równomiernego
 
     @Override
     public void start(Stage primaryStage) throws Exception {

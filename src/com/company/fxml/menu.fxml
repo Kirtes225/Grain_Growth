@@ -44,9 +44,10 @@
                         <CheckBox fx:id="pbcCheckBox" mnemonicParsing="false" text="Periodyczne" />
                         <Separator prefWidth="200.0" />
                         <Label text="Rozmieszczenie zarodków" />
-                        <ChoiceBox fx:id="nucleonsArrangementTypeChoiceBox" disable="true" prefHeight="25.0" prefWidth="200.0" />
+                        <ChoiceBox fx:id="nucleonsArrangementTypeChoiceBox" prefHeight="25.0" prefWidth="200.0" />
                         <Label text="Opcja okręgu" />
-                        <TextField fx:id="radiusTextField" alignment="CENTER" disable="true" promptText="Wprowadź promień" />
+                        <TextField fx:id="radiusTextField" alignment="CENTER" promptText="Wprowadź promień" />
+                        <TextField fx:id="circleNumberTextField" alignment="TOP_CENTER" promptText="Wprowadź liczbę okręgów" />
                         <Separator prefWidth="200.0" />
                         <Button fx:id="createSpaceButton" mnemonicParsing="false" onAction="#createSpaceButtonOnAction" text="Stwórz przestrzeń" />
                         <Separator prefWidth="200.0" />

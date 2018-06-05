@@ -7,10 +7,11 @@ import com.company.enums.ModelsType;
 import com.company.enums.NucleonsArrangementType;
 import com.company.interfaces.Arrangement;
 import com.company.interfaces.Rule;
+import com.company.models.arrangements.ContinuousRandom;
 import com.company.models.arrangements.Evenly;
+import com.company.models.arrangements.OnlyByClicking;
 import com.company.models.arrangements.RandomWithRadius;
-import com.company.models.rules.Moore;
-import com.company.models.rules.VonNeumann;
+import com.company.models.rules.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,7 +21,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import org.jetbrains.annotations.Contract;
 
 import java.net.URL;
 import java.util.Random;
@@ -45,6 +45,8 @@ public class MenuController implements Initializable {
     public CheckBox pbcCheckBox;
     @FXML
     public TextField radiusTextField;
+    @FXML
+    public TextField circleNumberTextField;
 
     private int dimensionXFromUser, dimensionYFromUser, grainsNumberFromUser;
     private double sizeXOfOneCell = 0, sizeYOfOneCell = 0;
@@ -59,6 +61,9 @@ public class MenuController implements Initializable {
     private boolean periodic;
     private NucleonsArrangementType nucleonsArrangementType;
     private Arrangement arrangement;
+
+//    private int radius;
+//    private int circleNumber;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -105,11 +110,23 @@ public class MenuController implements Initializable {
                     case VON_NEUMANN:
                         rule = new VonNeumann();
                         break;
+                    case HEXAGONAL_LEFT:
+                        rule = new HexagonalLeft();
+                        break;
+                    case HEXAGONAL_RIGHT:
+                        rule = new HexagonalRight();
+                        break;
+                    case HEXAGONAL_RANDOM:
+                        rule = new HexagonalRandom();
+                        break;
+                    case PENTAGONAL_RANDOM:
+                        rule = new PentagonalRandom();
+                        break;
                 }
 
                 nucleonsArrangementType = nucleonsArrangementTypeChoiceBox.getValue();
 
-                switch (nucleonsArrangementType){
+                switch (nucleonsArrangementType) {
                     case LOSOWE:
                         arrangement = new com.company.models.arrangements.Random();
                         break;
@@ -117,7 +134,16 @@ public class MenuController implements Initializable {
                         arrangement = new Evenly();
                         break;
                     case LOSOWE_Z_PROMIENIEM_R:
-                        arrangement = new RandomWithRadius(-1);
+                        if (checkIfStringIsAPositiveInteger(radiusTextField.getText()) && checkIfStringIsAPositiveInteger(circleNumberTextField.getText()))
+                            arrangement = new RandomWithRadius(Integer.parseInt(radiusTextField.getText()), Integer.parseInt(circleNumberTextField.getText()));
+                        else
+                            arrangement = new RandomWithRadius(0, 0);
+                        break;
+                    case PRZEZ_KLIKANIE:
+                        arrangement = new OnlyByClicking();
+                        break;
+                    case CIAGLE_LOSOWANIE:
+                        arrangement = new ContinuousRandom();
                 }
 
                 periodic = pbcCheckBox.isSelected();
@@ -140,13 +166,23 @@ public class MenuController implements Initializable {
                         if (isRunning) {
                             engine.nextGeneration();
                             Platform.runLater(this::printWholeStructure);
+                            if (engine.getArrangement() instanceof ContinuousRandom)
+                                engine.arrangementOfGeneration();
                         } else
                             Thread.yield();
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        if (engine.getArrangement() instanceof ContinuousRandom)
+                            try {
+                                Thread.sleep(400);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        else
+
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
 
                     }
                 }).start();
@@ -199,7 +235,6 @@ public class MenuController implements Initializable {
         }
     }
 
-    @Contract(pure = true)
     private boolean checkIfStringIsAPositiveInteger(String text) {
         if (text.matches("^[1-9][0-9]*$"))
             return true;
@@ -238,7 +273,7 @@ public class MenuController implements Initializable {
 
                     System.out.println("Added: X: " + x + " Y: " + y + "[xx: " + xx + ", yy: " + yy + "] GRAIN: " + engine.getGeneration().getSingleGrain(yy, xx));
                 } else {
-                    System.out.println("THIS IS: " + tmp +" at: (" + xx + ", " + yy + ")");
+                    System.out.println("THIS IS: " + tmp + " at: (" + xx + ", " + yy + ")");
 //                    int ID = tmp.getID();
 //                    engine.getGeneration().setSingleGrain(yy, xx, null);
 //                    for (int i = 0; i < engine.getGeneration().getSizeX(); i++) {

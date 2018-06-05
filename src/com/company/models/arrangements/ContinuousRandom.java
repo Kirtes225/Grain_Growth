@@ -5,12 +5,12 @@ import com.company.interfaces.Arrangement;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
-public class Random implements Arrangement {
+public class ContinuousRandom implements Arrangement {
+
     @Override
     public void arrangement(Generation generation, int numberOfNucleons) {
-//        int temp = 0;
+        //        int temp = 0;
 //        int width = generation.getSizeX();
 //        int height = generation.getSizeY();
 //        java.util.Random random = new java.util.Random();
@@ -57,5 +57,6 @@ public class Random implements Arrangement {
 //        }
 
         System.out.println("\n\n\n\n----------------------------------");
+
     }
 }

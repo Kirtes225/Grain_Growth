@@ -11,6 +11,10 @@ public class Engine {
     private Arrangement arrangement;
     private int nucleonsNumber;
 
+    public Arrangement getArrangement() {
+        return arrangement;
+    }
+
     public Engine(Rule rule, Generation generation, boolean periodic, Arrangement arrangement, int nucleonsNumber) {
         this.rule = rule;
         this.generation = generation;
@@ -20,7 +24,7 @@ public class Engine {
     }
 
     public synchronized void arrangementOfGeneration(){
-        this.arrangement.arrangement(this.generation, this.generation.getSizeX(), this.getGeneration().getSizeY(), nucleonsNumber);
+        this.arrangement.arrangement(this.generation, nucleonsNumber);
     }
 
     public synchronized Generation nextGeneration() {
