@@ -8,7 +8,7 @@ public class HexagonalRight extends Neighborhood{
     public Grain[] checkIfWillGrow(Grain current,
                                    Grain neighbour1, Grain neighbour2, Grain neighbour3,
                                    Grain neighbour4, Grain neighbour6,
-                                   Grain neighbour7, Grain neighbour8, Grain neighbour9){
+                                   Grain neighbour7, Grain neighbour8, Grain neighbour9, boolean monteCarlo){
 
         Grain[] grains = new Grain[9];
         if(current != null) {

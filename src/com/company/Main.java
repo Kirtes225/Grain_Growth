@@ -13,10 +13,6 @@ public class Main extends Application {
         launch(args);
     }
 
-    //https://stackoverflow.com/questions/13209538/looking-for-good-algorithm-for-equal-distribution
-    //quasi random sequence -> matlab library for java
-    //Dla rozmieszczenia równomiernego
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader fxmlloader = new FXMLLoader(getClass().getResource("fxml/menu.fxml"));

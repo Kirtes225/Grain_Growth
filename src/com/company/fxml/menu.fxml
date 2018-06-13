@@ -36,8 +36,8 @@
                         <Label text="Wymiar Y" />
                         <TextField fx:id="dimensionYTextField" alignment="CENTER" promptText="Wprowadź wymiar Y" />
                         <Separator prefWidth="200.0" />
-                        <Label text="Liczba zarodków" />
-                        <TextField fx:id="nucleonsTextField" alignment="CENTER" promptText="Ile zarodków?" />
+                        <Label text="Liczba zarodków/Liczba ID (MC)" />
+                        <TextField fx:id="nucleonsTextField" alignment="CENTER" promptText="Ile zarodków/ID?" />
                         <Accordion />
                         <Separator prefWidth="200.0" />
                         <Label text="Warunki brzegowe" />
@@ -47,9 +47,13 @@
                         <ChoiceBox fx:id="nucleonsArrangementTypeChoiceBox" prefHeight="25.0" prefWidth="200.0" />
                         <Label text="Opcja okręgu" />
                         <TextField fx:id="radiusTextField" alignment="CENTER" promptText="Wprowadź promień" />
-                        <TextField fx:id="circleNumberTextField" alignment="TOP_CENTER" promptText="Wprowadź liczbę okręgów" />
                         <Separator prefWidth="200.0" />
                         <Button fx:id="createSpaceButton" mnemonicParsing="false" onAction="#createSpaceButtonOnAction" text="Stwórz przestrzeń" />
+                  <Button fx:id="moreRandomGrains" mnemonicParsing="false" text="Dolosuj zarodki" />
+                  <Separator prefWidth="200.0" />
+                  <CheckBox fx:id="monteCarleCheckbox" mnemonicParsing="false" text="Monte Carlo" />
+                  <TextField fx:id="iterationTextField" alignment="CENTER" promptText="Wprowadź liczbę iteracji" />
+                  <Button fx:id="createFilledSpaceButton" mnemonicParsing="false" onAction="#createFilledSpaceButtonOnAction" text="Stwórz wypełnioną przestrzeń" />
                         <Separator prefWidth="200.0" />
                         <Button fx:id="startStopButton" disable="true" mnemonicParsing="false" onAction="#startStopButtonOnAction" text="STOP" />
                     </children>

@@ -17,12 +17,17 @@ public class Grain {
         this.color = color;
     }
 
-    public int getID() {
-        return ID;
+    public Grain(Color color, int ID) {
+        this.color = color;
+        this.ID = ID;
     }
 
     public static void setCounter(int counter) {
         Grain.counter = counter;
+    }
+
+    public int getID() {
+        return ID;
     }
 
     public Color getColor() {

@@ -10,17 +10,19 @@ public class Evenly implements Arrangement {
 
         int square = (int) Math.sqrt(numberOfNucleons);
 
-        int jump = (generation.getSizeX() / square);
+        double jumpX =  (generation.getSizeX() / square);
+        double jumpY =  (generation.getSizeY() / square);
 
-        while (tmp < numberOfNucleons) {
-            for (int i = 0; i < generation.getSizeX(); i += jump) {
-                for (int j = 0; j < generation.getSizeY(); j += jump) {
-                    generation.setSingleGrain(i, j);
-                    tmp++;
-                    if (tmp < numberOfNucleons)
-                        break;
+
+//       while (tmp < numberOfNucleons) {
+            for (double i = jumpX/2; i < generation.getSizeX(); i += jumpX) {
+                for (double j = jumpY/2; j < generation.getSizeY(); j += jumpY) {
+                    generation.setSingleGrain((int)i, (int)j);
+//                    tmp++;
+//                    if (tmp < numberOfNucleons)
+//                        break;
                 }
             }
-        }
+//        }
     }
 }

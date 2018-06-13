@@ -6,21 +6,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Generation {
+    private static List<Color> usedGrainColors;
     private Grain data[][];
-    private List<Color> usedGrainColors;
-
-    public List<Color> getUsedGrainColors() {
-        return usedGrainColors;
-    }
 
     public Generation(Grain[][] grainStructure) {
         this.data = grainStructure;
-        this.usedGrainColors = new ArrayList<>();
+        usedGrainColors = new ArrayList<>();
     }
 
     public Generation(Grain[][] grainStructure, List<Color> colorList) {
         this.data = grainStructure;
-        this.usedGrainColors = colorList;
+        usedGrainColors = colorList;
+    }
+
+    public static void generateColors(int colorsNumber) {
+        int tmp = 0;
+        Color color;
+        while (tmp < colorsNumber) {
+            color = Utils.randomColor();
+            if (!usedGrainColors.contains(color)) {
+                usedGrainColors.add(color);
+                tmp++;
+            }
+        }
+    }
+
+    public List<Color> getUsedGrainColors() {
+        return usedGrainColors;
     }
 
     public Grain[][] getAllGrains() {
@@ -53,6 +65,13 @@ public class Generation {
             } while (usedGrainColors.contains(color));
             usedGrainColors.add(color);
             this.data[y][x] = new Grain(color);
+        }
+    }
+
+    public void setSingleGrain(int x, int y, int index) {
+        if (x >= 0 && x < this.getSizeX() && y >= 0 && y < this.getSizeY()) {
+            Color color = usedGrainColors.get(index);
+            this.data[y][x] = new Grain(color, index+1);
         }
     }
 

@@ -23,6 +23,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 
@@ -46,14 +48,17 @@ public class MenuController implements Initializable {
     @FXML
     public TextField radiusTextField;
     @FXML
-    public TextField circleNumberTextField;
+    public CheckBox monteCarleCheckbox;
+    @FXML
+    public TextField iterationTextField;
+    @FXML
+    public Button moreRandomGrains;
 
+    private boolean monteCarloEnabled = false;
     private int dimensionXFromUser, dimensionYFromUser, grainsNumberFromUser;
     private double sizeXOfOneCell = 0, sizeYOfOneCell = 0;
-
     private GraphicsContext graphicsContext;
     private boolean isRunning = false;
-
     private Engine engine;
     private Generation generation;
     private Rule rule;
@@ -61,6 +66,7 @@ public class MenuController implements Initializable {
     private boolean periodic;
     private NucleonsArrangementType nucleonsArrangementType;
     private Arrangement arrangement;
+    private boolean moreRandomGrainsChecker = false;
 
 //    private int radius;
 //    private int circleNumber;
@@ -76,6 +82,15 @@ public class MenuController implements Initializable {
         graphicsContext = canvas.getGraphicsContext2D();
         graphicsContext.setFill(Color.FIREBRICK);
         graphicsContext.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+        monteCarleCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (engine == null)
+                monteCarloEnabled = !monteCarloEnabled;
+            else
+                engine.setMonteCarlo(!engine.isMonteCarlo());
+        });
+
+        moreRandomGrains.setOnAction(event -> moreRandomGrainsChecker = !moreRandomGrainsChecker);
     }
 
     public void createSpaceButtonOnAction(ActionEvent actionEvent) {
@@ -134,10 +149,10 @@ public class MenuController implements Initializable {
                         arrangement = new Evenly();
                         break;
                     case LOSOWE_Z_PROMIENIEM_R:
-                        if (checkIfStringIsAPositiveInteger(radiusTextField.getText()) && checkIfStringIsAPositiveInteger(circleNumberTextField.getText()))
-                            arrangement = new RandomWithRadius(Integer.parseInt(radiusTextField.getText()), Integer.parseInt(circleNumberTextField.getText()));
+                        if (checkIfStringIsAPositiveInteger(radiusTextField.getText()))
+                            arrangement = new RandomWithRadius(Integer.parseInt(radiusTextField.getText()));
                         else
-                            arrangement = new RandomWithRadius(0, 0);
+                            arrangement = new RandomWithRadius(0);
                         break;
                     case PRZEZ_KLIKANIE:
                         arrangement = new OnlyByClicking();
@@ -168,6 +183,10 @@ public class MenuController implements Initializable {
                             Platform.runLater(this::printWholeStructure);
                             if (engine.getArrangement() instanceof ContinuousRandom)
                                 engine.arrangementOfGeneration();
+                            if (checkIfStringIsAPositiveInteger(nucleonsTextField.getText()) && moreRandomGrainsChecker) {
+                                moreRandomGrainsInTheSpace(Integer.parseInt(nucleonsTextField.getText()));
+                                moreRandomGrainsChecker = !moreRandomGrainsChecker;
+                            }
                         } else
                             Thread.yield();
                         if (engine.getArrangement() instanceof ContinuousRandom)
@@ -179,13 +198,41 @@ public class MenuController implements Initializable {
                         else
 
                             try {
-                                Thread.sleep(100);
+                                Thread.sleep(50);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
 
                     }
                 }).start();
+            }
+        }
+    }
+
+    private void moreRandomGrainsInTheSpace(int toAddNucleons) {
+        int temp = 0;
+        int width = generation.getSizeX();
+        int height = generation.getSizeY();
+
+        System.out.println("W: " + width + ", H: " + height);
+
+        List<Integer> list = new ArrayList<>();
+        java.util.Random random = new java.util.Random();
+        for (int i = 0; i < width * height; i++) {
+            list.add(i);
+        }
+
+        while (temp < toAddNucleons) {
+            if (list.isEmpty())
+                break;
+            int coordinate = list.remove(random.nextInt(list.size()));
+            int y = coordinate % width;
+            int x = coordinate / width;
+            System.out.println("COR: " + coordinate + "=> (" + x + ", " + y + ")");
+            Grain tmp = engine.getGeneration().getSingleGrain(y, x);
+            if (tmp == null) {
+                engine.getGeneration().setSingleGrain(y, x);
+                temp++;
             }
         }
     }
@@ -302,5 +349,79 @@ public class MenuController implements Initializable {
         alert.setTitle("Tuptający jeż");
         alert.setHeaderText("Tup, tup, tup");
         alert.show();
+    }
+
+    public void createFilledSpaceButtonOnAction(ActionEvent actionEvent) {
+        System.out.println("CANVAS: " + canvas.getWidth() + " " + canvas.getHeight());
+        if (checkIfStringIsAPositiveInteger(dimensionXTextField.getText())
+                && checkIfStringIsAPositiveInteger(dimensionYTextField.getText())
+                && checkIfStringIsAPositiveInteger(nucleonsTextField.getText())) {
+
+            startStopButton.setDisable(false);
+            isRunning = true;
+
+            graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+            dimensionXFromUser = Integer.parseInt(dimensionXTextField.getText());
+            dimensionYFromUser = Integer.parseInt(dimensionYTextField.getText());
+            grainsNumberFromUser = Integer.parseInt(nucleonsTextField.getText());
+
+            if (dimensionXFromUser * dimensionYFromUser >= grainsNumberFromUser) {
+
+                sizeXOfOneCell = canvas.getWidth() / dimensionXFromUser;
+                sizeYOfOneCell = canvas.getHeight() / dimensionYFromUser;
+
+                Grain.setCounter(0);
+                generation = new Generation(new Grain[dimensionXFromUser][dimensionYFromUser]);
+
+                neighborhoodType = neighborhoodTypeChoiceBox.getValue();
+
+                switch (neighborhoodType) {
+                    case MOORE:
+                        rule = new Moore();
+                        break;
+                    case VON_NEUMANN:
+                        rule = new VonNeumann();
+                        break;
+                    default:
+                        System.out.println("DEFAULT IN SWITCH - MOORE");
+                        rule = new Moore();
+                        break;
+                }
+            }
+
+            periodic = pbcCheckBox.isSelected();
+
+            engine = new Engine(rule, generation, periodic, grainsNumberFromUser, monteCarloEnabled);
+
+            engine.arrangementOfGeneration();
+
+            int iterationNumber = 0;
+            boolean validIteration = checkIfStringIsAPositiveInteger(iterationTextField.getText());
+
+            if (validIteration)
+                iterationNumber = Integer.parseInt(iterationTextField.getText());
+
+            int finalIterationNumber = iterationNumber;
+
+            new Thread(() -> {
+                for (int i = 0; ; i++) {
+                    if (validIteration && i == finalIterationNumber) {
+                        isRunning = false;
+                        Platform.runLater(() -> startStopButton.setText("START"));
+                    }
+                    if (isRunning) {
+                        engine.nextGeneration();
+                        Platform.runLater(this::printWholeStructure);
+                    } else
+                        Thread.yield();
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
     }
 }

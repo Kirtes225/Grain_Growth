@@ -5,15 +5,14 @@ import com.company.interfaces.Arrangement;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomWithRadius implements Arrangement {
     private int radius;
-    private int circleNumber;
+    //private int circleNumber;
 
-    public RandomWithRadius(int radius, int circleNumber) {
+    public RandomWithRadius(int radius) {
         this.radius = radius;
-        this.circleNumber = circleNumber;
+        //this.circleNumber = circleNumber;
     }
 
     @Override
@@ -21,48 +20,53 @@ public class RandomWithRadius implements Arrangement {
         int width = generation.getSizeX();
         int height = generation.getSizeY();
 
-        int[] circlesCoordinates = ThreadLocalRandom
-                .current()
-                .ints(0, width*height)
-                .distinct()
-                .limit(circleNumber)
-                .toArray();
+//        int[] circlesCoordinates = ThreadLocalRandom
+//                .current()
+//                .ints(0, width*height)
+//                .distinct()
+//                .limit(circleNumber)
+//                .toArray();
 
         List<Integer> list = new ArrayList<>();
-        for(int i = 0; i < width * height; i++){
+        for (int i = 0; i < width * height; i++) {
             list.add(i);
         }
 
-        for(int circleCoordinate : circlesCoordinates) {
-            int circleY = circleCoordinate % width;
-            int circleX = circleCoordinate / width;
-            System.out.println("CIRCLE: " + circleX + ", " + circleY + " r = " + radius);
-        }
+//        for(int circleCoordinate : circlesCoordinates) {
+//            int circleY = circleCoordinate % width;
+//            int circleX = circleCoordinate / width;
+//            System.out.println("CIRCLE: " + circleX + ", " + circleY + " r = " + radius);
+//        }
 
         int temp = 0;
         java.util.Random random = new java.util.Random();
 
-        while (temp < numberOfNucleons){
+        List<Integer> grainsInSpace = new ArrayList<>();
+
+        while (temp < numberOfNucleons) {
+            if (list.isEmpty())
+                break;
             int grainCoordinate = list.remove(random.nextInt(list.size()));
             int grainY = grainCoordinate % width;
             int grainX = grainCoordinate / width;
 
             boolean willBeOutsideCircles = true;
-            for(int circleCoordinate : circlesCoordinates){
+
+            for (int circleCoordinate : grainsInSpace) {
                 int circleY = circleCoordinate % width;
                 int circleX = circleCoordinate / width;
                 //wzór na długość odcinka = pierwiastek[(x2-x1)^2 + (y2-y1)^2]
-                if(Math.sqrt((grainX - circleX)*(grainX - circleX) + (grainY - circleY)*(grainY - circleY)) < radius){
+                if (Math.sqrt((grainX - circleX) * (grainX - circleX) + (grainY - circleY) * (grainY - circleY)) < radius) {
                     willBeOutsideCircles = false;
                     break;
                 }
             }
 
-            if(willBeOutsideCircles){
+            if (willBeOutsideCircles) {
                 generation.setSingleGrain(grainY, grainX);
+                grainsInSpace.add(grainCoordinate);
+                temp++;
             }
-
-            temp++;
         }
 
 //        System.out.println("W: " + width + ", H: " + height);

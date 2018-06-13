@@ -6,6 +6,6 @@ import com.company.interfaces.Arrangement;
 public class OnlyByClicking implements Arrangement {
     @Override
     public void arrangement(Generation generation, int numberOfNucleons) {
-        //nothing, because user is choosing places
+        //nothing - places are chosen by user
     }
 }

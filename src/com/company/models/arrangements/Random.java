@@ -55,7 +55,5 @@ public class Random implements Arrangement {
 //        while(!list.isEmpty()) {
 //            System.out.print(list.remove(random.nextInt(list.size())) + " ");
 //        }
-
-        System.out.println("\n\n\n\n----------------------------------");
     }
 }
